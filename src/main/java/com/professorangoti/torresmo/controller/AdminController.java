@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.professorangoti.torresmo.model.Produto;
 import com.professorangoti.torresmo.service.ProdutoService;
@@ -23,32 +22,35 @@ public class AdminController {
 
   @GetMapping
   public String admin(Model model) {
+    System.out.println("Entrou no metodo admin do AdminController");
     List<Produto> produtos = produtoService.findAll();
     model.addAttribute("produtos", produtos);
+
+    // Adiciona um objeto vazio para o formulário (command object)
+    if (!model.containsAttribute("produto")) {
+      model.addAttribute("produto", new Produto());
+    }
+
     return "admin";
   }
 
   @PostMapping("/produtos")
-  public String salvarProduto(
-      @RequestParam(required = false) Long idProduto,
-      @RequestParam String nome,
-      @RequestParam(required = false) String descricao,
-      @RequestParam Double preco,
-      @RequestParam(required = false) String tamanho,
-      @RequestParam(required = false) Boolean disponivel) {
-
-    Produto produto = new Produto();
-    if (idProduto != null) {
-      // Atualização: buscar o produto existente
-      produto = produtoService.findById(idProduto).orElse(new Produto());
+  public String salvarProduto(Produto produto) {
+    // Se tem ID, é update; senão é create
+    if (produto.getIdProduto() != null) {
+      Produto produtoExistente = produtoService.findById(produto.getIdProduto())
+          .orElse(new Produto());
+      produtoExistente.setNome(produto.getNome());
+      produtoExistente.setDescricao(produto.getDescricao());
+      produtoExistente.setPreco(produto.getPreco());
+      produtoExistente.setTamanho(produto.getTamanho());
+      produtoExistente.setDisponivel(produto.getDisponivel() != null ? produto.getDisponivel() : true);
+      produtoService.save(produtoExistente);
+    } else {
+      produto.setDisponivel(produto.getDisponivel() != null ? produto.getDisponivel() : true);
+      produtoService.save(produto);
     }
-    produto.setNome(nome);
-    produto.setDescricao(descricao);
-    produto.setPreco(preco);
-    produto.setTamanho(tamanho);
-    produto.setDisponivel(disponivel != null ? disponivel : true);
 
-    produtoService.save(produto);
     return "redirect:/admin";
   }
 

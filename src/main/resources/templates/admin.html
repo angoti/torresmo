@@ -30,24 +30,24 @@
             </tr>
           </thead>
           <tbody>
-            <tr th:each="produto : ${produtos}">
-              <td th:text="${produto.idProduto}">1</td>
-              <td th:text="${produto.nome}">Nome</td>
-              <td th:text="${produto.descricao}">Descrição</td>
+            <tr th:each="produto : ${produtos}" th:object="${produto}">
+              <td th:text="*{idProduto}">1</td>
+              <td th:text="*{nome}">Nome</td>
+              <td th:text="*{descricao}">Descrição</td>
               <td class="text-end">
                 R$
-                <span th:text="${#numbers.formatDecimal(produto.preco, 1, 2)}">0,00</span>
+                <span th:text="*{#numbers.formatDecimal(preco, 1, 2)}">0,00</span>
               </td>
               <td class="text-end">
                 <button
                   type="button"
                   class="btn btn-sm btn-outline-primary me-1 btn-editar"
-                  data-id="[[${produto.idProduto}]]"
-                  data-nome="[[${produto.nome}]]"
-                  data-descricao="[[${produto.descricao}]]"
-                  data-preco="[[${produto.preco}]]"
-                  data-tamanho="[[${produto.tamanho}]]"
-                  data-disponivel="[[${produto.disponivel}]]">
+                  th:data-id="${produto.idProduto}"
+                  th:data-nome="${produto.nome}"
+                  th:data-descricao="${produto.descricao}"
+                  th:data-preco="${produto.preco}"
+                  th:data-tamanho="${produto.tamanho}"
+                  th:data-disponivel="${produto.disponivel}">
                   Editar
                 </button>
 
@@ -72,7 +72,11 @@
       <div class="modal fade" id="produtoModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
-            <form id="produtoForm" th:action="@{/admin/produtos}" method="post">
+            <form
+              id="produtoForm"
+              th:action="@{/admin/produtos}"
+              th:object="${produto}"
+              method="post">
               <div class="modal-header">
                 <h5 class="modal-title">Produto</h5>
                 <button
@@ -82,18 +86,17 @@
                   aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <input type="hidden" name="idProduto" id="produtoId" />
+                <input type="hidden" th:field="*{idProduto}" />
 
                 <div class="mb-3">
                   <label for="nome" class="form-label">Nome</label>
-                  <input id="nome" name="nome" class="form-control" required />
+                  <input th:field="*{nome}" class="form-control" required />
                 </div>
 
                 <div class="mb-3">
                   <label for="descricao" class="form-label">Descrição</label>
                   <textarea
-                    id="descricao"
-                    name="descricao"
+                    th:field="*{descricao}"
                     class="form-control"
                     rows="3"></textarea>
                 </div>
@@ -102,8 +105,7 @@
                   <div class="col-md-6 mb-3">
                     <label for="preco" class="form-label">Preço (R$)</label>
                     <input
-                      id="preco"
-                      name="preco"
+                      th:field="*{preco}"
                       class="form-control"
                       type="number"
                       step="0.01"
@@ -113,18 +115,16 @@
 
                   <div class="col-md-6 mb-3">
                     <label for="tamanho" class="form-label">Tamanho</label>
-                    <input id="tamanho" name="tamanho" class="form-control" />
+                    <input th:field="*{tamanho}" class="form-control" />
                   </div>
                 </div>
 
                 <div class="mb-3 form-check">
                   <input
+                    th:field="*{disponivel}"
                     type="checkbox"
                     class="form-check-input"
-                    id="disponivel"
-                    name="disponivel"
-                    value="true"
-                    checked />
+                    value="true" />
                   <label class="form-check-label" for="disponivel">Disponível</label>
                 </div>
               </div>
@@ -139,8 +139,9 @@
         </div>
       </div>
 
-      <script>
+      <script th:inline="javascript">
         (function () {
+
           // Ao clicar em 'Editar', preenche o formulário e abre o modal
           document.querySelectorAll(".btn-editar").forEach(function (btn) {
             btn.addEventListener("click", function () {
@@ -151,26 +152,35 @@
               var tamanho = this.getAttribute("data-tamanho");
               var disponivel = this.getAttribute("data-disponivel");
 
-              document.getElementById("produtoId").value = id || "";
+              // Preenche os campos (th:field gera IDs automaticamente)
+              document.getElementById("idProduto").value = id || "";
               document.getElementById("nome").value = nome || "";
               document.getElementById("descricao").value = descricao || "";
               document.getElementById("preco").value = preco || "";
               document.getElementById("tamanho").value = tamanho || "";
-              document.getElementById("disponivel").checked =
-                disponivel === "true" || disponivel === "1";
+
+              // Checkbox com th:field tem comportamento especial
+              var checkDisponivel = document.getElementById("disponivel1");
+              if (checkDisponivel) {
+                checkDisponivel.checked = disponivel === "true" || disponivel === "true";
+              }
 
               var modal = new bootstrap.Modal(document.getElementById("produtoModal"));
               modal.show();
             });
           });
 
-          // Ao clicar em 'Novo Produto', limpa o formulário (botão já abre o modal)
+          // Ao clicar em 'Novo Produto', limpa o formulário
           var btnNovo = document.getElementById("btnNovo");
           if (btnNovo) {
             btnNovo.addEventListener("click", function () {
               document.getElementById("produtoForm").reset();
-              document.getElementById("produtoId").value = "";
-              document.getElementById("disponivel").checked = true;
+              document.getElementById("idProduto").value = "";
+
+              var checkDisponivel = document.getElementById("disponivel1");
+              if (checkDisponivel) {
+                checkDisponivel.checked = true;
+              }
             });
           }
         })();
