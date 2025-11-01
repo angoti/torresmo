@@ -30,7 +30,11 @@ public class ProdutoController {
   @GetMapping("/")
   public String home(Model model) {
     List<Produto> produtos = produtoService.findAll();
-    model.addAttribute("produtos", produtos);
+    List<Produto> produtosEmDestaque = produtos.stream()
+        .filter(Produto::getDestaque)
+        .toList();
+
+    model.addAttribute("destaque", produtosEmDestaque);
     return "home";
   }
 

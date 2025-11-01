@@ -25,6 +25,35 @@
 
       <!-- Destaques -->
       <div class="mb-5">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="d-flex align-items-center h-100">
+              <h2 class="mb-0">🔥 Produtos em destaque</h2>
+            </div>
+          </div>
+          <div class="col-md-6 d-flex justify-content-end align-items-center p-3">
+            <a th:href="@{/produtos}" class="btn btn-outline-danger">Ver todos</a>
+          </div>
+        </div>
+        <div class="row g-4">
+          <div class="col-md-4" th:each="produto : ${destaque}">
+            <div class="card h-100 border-0 shadow-sm">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between">
+                  <h4 class="card-title" th:text="${produto.nome}">Sempre Fresquinho</h4>
+                  <a th:href="@{/produtos}" class="btn btn-outline-danger p-1">Ver todos</a>
+                </div>
+                <p class="card-text text-muted" th:text="${produto.descricao}">
+                  Preparamos seu torresmo na hora para garantir máxima crocância
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Produtos em Destaque -->
+      <div class="mb-5">
         <h2 class="mb-4">✨ Por que escolher o Torresmo Delivery?</h2>
         <div class="row g-4">
           <div class="col-md-4">
@@ -59,8 +88,6 @@
         </div>
       </div>
 
-      <!-- Produtos em Destaque -->
-      <div class="mb-5">
       <!-- Como Funciona -->
       <div class="mb-5">
         <h2 class="mb-4">📋 Como Fazer seu Pedido</h2>
