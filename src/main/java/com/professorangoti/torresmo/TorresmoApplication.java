@@ -28,6 +28,7 @@ public class TorresmoApplication {
 				p1.setPreco(25.90);
 				p1.setTamanho("500g");
 				p1.setDisponivel(true);
+				p1.setDestaque(false);
 				produtoRepository.save(p1);
 
 				Produto p2 = new Produto();
@@ -36,6 +37,7 @@ public class TorresmoApplication {
 				p2.setPreco(28.90);
 				p2.setTamanho("500g");
 				p2.setDisponivel(true);
+				p2.setDestaque(false);
 				produtoRepository.save(p2);
 
 				Produto p3 = new Produto();
@@ -44,6 +46,7 @@ public class TorresmoApplication {
 				p3.setPreco(27.90);
 				p3.setTamanho("500g");
 				p3.setDisponivel(true);
+				p3.setDestaque(false);
 				produtoRepository.save(p3);
 
 				Produto p4 = new Produto();
@@ -52,6 +55,7 @@ public class TorresmoApplication {
 				p4.setPreco(35.90);
 				p4.setTamanho("300g");
 				p4.setDisponivel(true);
+				p4.setDestaque(false);
 				produtoRepository.save(p4);
 
 				Produto p5 = new Produto();
@@ -60,6 +64,7 @@ public class TorresmoApplication {
 				p5.setPreco(75.00);
 				p5.setTamanho("1,5kg");
 				p5.setDisponivel(true);
+				p5.setDestaque(false);
 				produtoRepository.save(p5);
 
 				System.out.println("Produtos adicionados com sucesso!");

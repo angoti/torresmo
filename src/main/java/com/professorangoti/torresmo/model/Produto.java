@@ -30,5 +30,5 @@ public class Produto {
     private Double preco;
     private String tamanho;
     private Boolean disponivel;
-    private Boolean destaque = false;
+    private Boolean destaque;
 }

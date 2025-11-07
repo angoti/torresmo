@@ -18,7 +18,7 @@ public class ProdutoController {
 
   @GetMapping("/produtos")
   public String exibeProdutos(Model model) {
-    List<Produto> produtos = produtoService.findAll();
+    List<Produto> produtos = produtoService.produtosDisponoveis();
     System.out.println("Qtde: " + produtos.size());
     for (Produto produto : produtos) {
       System.out.println("Produto: " + produto.getNome());
@@ -29,12 +29,7 @@ public class ProdutoController {
 
   @GetMapping("/")
   public String home(Model model) {
-    List<Produto> produtos = produtoService.findAll();
-    List<Produto> produtosEmDestaque = produtos.stream()
-        .filter(Produto::getDestaque)
-        .toList();
-
-    model.addAttribute("destaque", produtosEmDestaque);
+    model.addAttribute("destaque", produtoService.findDestaques());
     return "home";
   }
 

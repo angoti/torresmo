@@ -36,21 +36,7 @@ public class AdminController {
 
   @PostMapping("/produtos")
   public String salvarProduto(Produto produto) {
-    // Se tem ID, é update; senão é create
-    if (produto.getIdProduto() != null) {
-      Produto produtoExistente = produtoService.findById(produto.getIdProduto())
-          .orElse(new Produto());
-      produtoExistente.setNome(produto.getNome());
-      produtoExistente.setDescricao(produto.getDescricao());
-      produtoExistente.setPreco(produto.getPreco());
-      produtoExistente.setTamanho(produto.getTamanho());
-      produtoExistente.setDisponivel(produto.getDisponivel() != null ? produto.getDisponivel() : true);
-      produtoService.save(produtoExistente);
-    } else {
-      produto.setDisponivel(produto.getDisponivel() != null ? produto.getDisponivel() : true);
-      produtoService.save(produto);
-    }
-
+    produtoService.save(produto);
     return "redirect:/admin";
   }
 

@@ -22,11 +22,13 @@
         <table class="table table-striped table-hover">
           <thead class="table-danger">
             <tr>
-              <th>ID</th>
-              <th>Nome</th>
-              <th>Descrição</th>
-              <th class="text-end">Preço</th>
-              <th class="text-end">Ações</th>
+              <th class="border border-1 border-light">ID</th>
+              <th class="border border-1 border-light">Nome</th>
+              <th class="border border-1 border-light">Descrição</th>
+              <th class="border border-1 border-light text-end">Preço</th>
+              <th class="border border-1 border-light text-center">Disponível</th>
+              <th class="border border-1 border-light text-center">Em destaque</th>
+              <th class="border border-1 border-light text-end">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -35,8 +37,13 @@
               <td th:text="*{nome}">Nome</td>
               <td th:text="*{descricao}">Descrição</td>
               <td class="text-end">
-                R$
-                <span th:text="*{#numbers.formatDecimal(preco, 1, 2)}">0,00</span>
+                <span th:text="*{#numbers.formatCurrency(preco)}">0,00</span>
+              </td>
+              <td class="text-center">
+                <span th:text="*{disponivel ? 'Sim' : 'Não'}">Não</span>
+              </td>
+              <td class="text-center">
+                <span th:text="*{destaque ? 'Sim' : 'Não'}">Não</span>
               </td>
               <td class="text-end">
                 <button
@@ -47,7 +54,9 @@
                   th:data-descricao="${produto.descricao}"
                   th:data-preco="${produto.preco}"
                   th:data-tamanho="${produto.tamanho}"
-                  th:data-disponivel="${produto.disponivel}">
+                  th:data-disponivel="${produto.disponivel}"
+                  th:data-destaque="${produto.destaque}"
+                  >
                   Editar
                 </button>
 
@@ -95,10 +104,7 @@
 
                 <div class="mb-3">
                   <label for="descricao" class="form-label">Descrição</label>
-                  <textarea
-                    th:field="*{descricao}"
-                    class="form-control"
-                    rows="3"></textarea>
+                  <textarea th:field="*{descricao}" class="form-control" rows="3"></textarea>
                 </div>
 
                 <div class="row">
@@ -119,13 +125,15 @@
                   </div>
                 </div>
 
-                <div class="mb-3 form-check">
-                  <input
-                    th:field="*{disponivel}"
-                    type="checkbox"
-                    class="form-check-input"
-                    value="true" />
-                  <label class="form-check-label" for="disponivel">Disponível</label>
+                <div class="row ms-1">
+                  <div class="col-md-6 mb-3 form-check">
+                    <input th:field="*{disponivel}" type="checkbox" class="form-check-input" />
+                    <label class="form-check-label" for="disponivel">Disponível</label>
+                  </div>
+                  <div class="col-md-6 mb-3 form-check">
+                    <input th:field="*{destaque}" type="checkbox" class="form-check-input" />
+                    <label class="form-check-label" for="destaque">Destaque</label>
+                  </div>
                 </div>
               </div>
               <div class="modal-footer">
@@ -141,7 +149,6 @@
 
       <script th:inline="javascript">
         (function () {
-
           // Ao clicar em 'Editar', preenche o formulário e abre o modal
           document.querySelectorAll(".btn-editar").forEach(function (btn) {
             btn.addEventListener("click", function () {
@@ -151,6 +158,7 @@
               var preco = this.getAttribute("data-preco");
               var tamanho = this.getAttribute("data-tamanho");
               var disponivel = this.getAttribute("data-disponivel");
+              var destaque = this.getAttribute("data-destaque");
 
               // Preenche os campos (th:field gera IDs automaticamente)
               document.getElementById("idProduto").value = id || "";
@@ -162,7 +170,11 @@
               // Checkbox com th:field tem comportamento especial
               var checkDisponivel = document.getElementById("disponivel1");
               if (checkDisponivel) {
-                checkDisponivel.checked = disponivel === "true" || disponivel === "true";
+                checkDisponivel.checked = disponivel === "true";
+              }
+              var checkDestaque = document.getElementById("destaque1");
+              if (checkDestaque) {
+                checkDestaque.checked = destaque === "true";
               }
 
               var modal = new bootstrap.Modal(document.getElementById("produtoModal"));

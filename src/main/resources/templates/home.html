@@ -23,36 +23,42 @@
         </div>
       </div>
 
-      <!-- Destaques -->
+      <!-- Produtos em Destaque -->
       <div class="mb-5">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="d-flex align-items-center h-100">
-              <h2 class="mb-0">🔥 Produtos em destaque</h2>
-            </div>
+        <div class="row mb-4">
+          <div class="col-6">
+            <h2>🔥 Produtos em destaque</h2>
           </div>
-          <div class="col-md-6 d-flex justify-content-end align-items-center p-3">
+          <div class="col-6 d-flex align-items-center justify-content-end">
             <a th:href="@{/produtos}" class="btn btn-outline-danger">Ver todos</a>
           </div>
         </div>
-        <div class="row g-4">
-          <div class="col-md-4" th:each="produto : ${destaque}">
-            <div class="card h-100 border-0 shadow-sm">
+        <div class="row g-3">
+          <div class="col-xxl-4" th:each="produto : ${destaque}">
+            <div class="card h-100 shadow">
               <div class="card-body p-4">
-                <div class="d-flex justify-content-between">
-                  <h4 class="card-title" th:text="${produto.nome}">Sempre Fresquinho</h4>
-                  <a th:href="@{/produtos}" class="btn btn-outline-danger p-1">Ver todos</a>
+                <div class="d-flex flex-column justify-content-between h-100">
+                  <div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <h5 class="card-title m-0" th:text="${produto.nome}">Sempre Fresquinho</h5>
+                      <a class="btn btn-success py-0 fw-bold">Disponível</a>
+                    </div>
+                    <p class="card-text text-muted" th:text="${produto.descricao}">
+                      Preparamos seu torresmo na hora para garantir máxima crocância
+                    </p>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center mt-3">
+                    <span class="fw-bold fs-5 text-danger" th:text="${#numbers.formatCurrency(produto.preco)}">0,00</span>
+                    <a class="btn btn-danger fw-bold">🛒 Adicionar</a>
+                  </div>
                 </div>
-                <p class="card-text text-muted" th:text="${produto.descricao}">
-                  Preparamos seu torresmo na hora para garantir máxima crocância
-                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Produtos em Destaque -->
+      <!-- Destaques -->
       <div class="mb-5">
         <h2 class="mb-4">✨ Por que escolher o Torresmo Delivery?</h2>
         <div class="row g-4">
