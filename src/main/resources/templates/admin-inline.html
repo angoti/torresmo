@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout('Administrador Inline', ~{::content}, 'info')}">
+  <body>
+    <div th:fragment="content">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Área do Administrador</h1>
+        <div>
+          <button id="btnNovo" class="btn btn-info">Novo Produto</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-info">
+            <tr>
+              <th class="border border-1 border-light">ID</th>
+              <th class="border border-1 border-light">Nome</th>
+              <th class="border border-1 border-light">Descrição</th>
+              <th class="border border-1 border-light text-end">Preço</th>
+              <th class="border border-1 border-light text-center">Tamanho</th>
+              <th class="border border-1 border-light text-center">Disponível</th>
+              <th class="border border-1 border-light text-center">Destaque</th>
+              <th class="border border-1 border-light text-end">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaProdutos">
+            <!-- Linha para adicionar novo produto (inicialmente oculta) -->
+            <tr id="linhaNovoItem" style="display: none">
+              <td>-</td>
+              <td>
+                <input type="text" class="form-control form-control-sm" id="novoNome" placeholder="Nome" required />
+              </td>
+              <td>
+                <textarea class="form-control form-control-sm" id="novoDescricao" placeholder="Descrição" rows="2"></textarea>
+              </td>
+              <td>
+                <input type="number" class="form-control form-control-sm text-end" id="novoPreco" placeholder="0.00" step="0.01" min="0" required />
+              </td>
+              <td>
+                <input type="text" class="form-control form-control-sm" id="novoTamanho" placeholder="Tamanho" />
+              </td>
+              <td class="text-center">
+                <input type="checkbox" class="form-check-input" id="novoDisponivel" checked />
+              </td>
+              <td class="text-center">
+                <input type="checkbox" class="form-check-input" id="novoDestaque" />
+              </td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-success me-1" onclick="salvarNovo()">Salvar</button>
+                <button class="btn btn-sm btn-secondary" onclick="cancelarNovo()">Cancelar</button>
+              </td>
+            </tr>
+
+            <!-- Linhas de produtos existentes -->
+            <tr th:each="produto : ${produtos}" th:id="'linha-' + ${produto.idProduto}" th:object="${produto}">
+              <td th:text="*{idProduto}">1</td>
+              <td>
+                <span class="view-mode" th:text="*{nome}">Nome</span>
+                <input type="text" class="form-control form-control-sm edit-mode d-none" th:id="'nome-' + *{idProduto}" th:value="*{nome}" />
+              </td>
+              <td>
+                <span class="view-mode" th:text="*{descricao}">Descrição</span>
+                <textarea
+                  class="form-control form-control-sm edit-mode d-none"
+                  th:id="'descricao-' + *{idProduto}"
+                  th:text="*{descricao}"
+                  rows="2"></textarea>
+              </td>
+              <td class="text-end">
+                <span class="view-mode" th:text="*{#numbers.formatCurrency(preco)}">0,00</span>
+                <input
+                  type="number"
+                  class="form-control form-control-sm text-end edit-mode d-none"
+                  th:id="'preco-' + *{idProduto}"
+                  th:value="*{preco}"
+                  step="0.01"
+                  min="0" />
+              </td>
+              <td class="text-center">
+                <span class="view-mode" th:text="*{tamanho}">-</span>
+                <input
+                  type="text"
+                  class="form-control form-control-sm edit-mode d-none"
+                  th:id="'tamanho-' + *{idProduto}"
+                  th:value="*{tamanho}" />
+              </td>
+              <td class="text-center">
+                <span class="view-mode" th:text="*{disponivel ? 'Sim' : 'Não'}">Não</span>
+                <input
+                  type="checkbox"
+                  class="form-check-input edit-mode d-none"
+                  th:id="'disponivel-' + *{idProduto}"
+                  th:checked="*{disponivel}" />
+              </td>
+              <td class="text-center">
+                <span class="view-mode" th:text="*{destaque ? 'Sim' : 'Não'}">Não</span>
+                <input
+                  type="checkbox"
+                  class="form-check-input edit-mode d-none"
+                  th:id="'destaque-' + *{idProduto}"
+                  th:checked="*{destaque}" />
+              </td>
+              <td class="text-end">
+                <div class="view-mode">
+                  <button class="btn btn-sm btn-outline-primary me-1 btn-editar" th:data-id="*{idProduto}">Editar</button>
+                  <form th:action="@{'/admin/produtos/' + *{idProduto} + '/delete'}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir produto?');">Excluir</button>
+                  </form>
+                </div>
+                <div class="edit-mode d-flex flex-column border border-1 d-none">
+                  <button class="btn btn-sm btn-success mb-1 flex-fill" th:onclick="'salvarEdicao(' + *{idProduto} + ')'">Salvar</button>
+                  <button class="btn btn-sm btn-secondary flex-fill" th:onclick="'cancelarEdicao(' + *{idProduto} + ')'">Cancelar</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <script th:inline="javascript">
+        // Adicionar event listeners aos botões
+        document.querySelectorAll(".btn-editar").forEach(btn => {
+          btn.addEventListener("click", function () {
+            editarLinha(this.dataset.id);
+          });
+        });
+
+        // Mostrar linha para adicionar novo produto
+        document.getElementById("btnNovo").addEventListener("click", function () {
+          document.getElementById("linhaNovoItem").style.display = "table-row";
+          document.getElementById("novoNome").focus();
+        });
+
+        // Cancelar adição de novo produto
+        function cancelarNovo() {
+          document.getElementById("linhaNovoItem").style.display = "none";
+          limparFormularioNovo();
+        }
+
+        // Limpar formulário de novo produto
+        function limparFormularioNovo() {
+          document.getElementById("novoNome").value = "";
+          document.getElementById("novoDescricao").value = "";
+          document.getElementById("novoPreco").value = "";
+          document.getElementById("novoTamanho").value = "";
+          document.getElementById("novoDisponivel").checked = true;
+          document.getElementById("novoDestaque").checked = false;
+        }
+
+        // Salvar novo produto
+        function salvarNovo() {
+          const form = document.createElement("form");
+          form.method = "POST";
+          form.action = /*[[@{/admin/produtos-inline}]]*/ "/admin/produtos-inline";
+
+          const dados = {
+            nome: document.getElementById("novoNome").value,
+            descricao: document.getElementById("novoDescricao").value,
+            preco: document.getElementById("novoPreco").value,
+            tamanho: document.getElementById("novoTamanho").value,
+            disponivel: document.getElementById("novoDisponivel").checked,
+            destaque: document.getElementById("novoDestaque").checked,
+          };
+
+          // Validação básica
+          if (!dados.nome || !dados.preco) {
+            alert("Nome e Preço são obrigatórios!");
+            return;
+          }
+
+          for (const [key, value] of Object.entries(dados)) {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = key;
+            input.value = value;
+            form.appendChild(input);
+          }
+
+          document.body.appendChild(form);
+          form.submit();
+        }
+
+        // Habilitar edição de uma linha
+        function editarLinha(id) {
+          const linha = document.getElementById("linha-" + id);
+          linha.querySelectorAll(".view-mode").forEach(el => (el.style.display = "none"));
+          // Mostrar modo edição
+          linha.querySelectorAll(".edit-mode").forEach(el => {
+            el.classList.remove("d-none");
+          });
+          document.getElementById("nome-" + id).focus();
+        }
+
+        // Cancelar edição de uma linha
+        function cancelarEdicao(id) {
+          const linha = document.getElementById("linha-" + id);
+          linha.querySelectorAll(".view-mode").forEach(el => (el.style.display = ""));
+          // Ocultar modo edição
+          linha.querySelectorAll(".edit-mode").forEach(el => {
+            el.classList.add("d-none");
+          });
+        }
+
+        // Salvar edição de uma linha
+        function salvarEdicao(id) {
+          const form = document.createElement("form");
+          form.method = "POST";
+          form.action = /*[[@{/admin/produtos-inline}]]*/ "/admin/produtos-inline";
+
+          const dados = {
+            idProduto: id,
+            nome: document.getElementById("nome-" + id).value,
+            descricao: document.getElementById("descricao-" + id).value,
+            preco: document.getElementById("preco-" + id).value,
+            tamanho: document.getElementById("tamanho-" + id).value,
+            disponivel: document.getElementById("disponivel-" + id).checked,
+            destaque: document.getElementById("destaque-" + id).checked,
+          };
+
+          // Validação básica
+          if (!dados.nome || !dados.preco) {
+            alert("Nome e Preço são obrigatórios!");
+            return;
+          }
+
+          for (const [key, value] of Object.entries(dados)) {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = key;
+            input.value = value;
+            form.appendChild(input);
+          }
+
+          document.body.appendChild(form);
+          form.submit();
+        }
+      </script>
+    </div>
+  </body>
+</html>

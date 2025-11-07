@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html th:fragment="layout(title, content)" lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<html th:fragment="layout(title, content, navbarColor)" lang="pt-br" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,7 +9,7 @@
       rel="stylesheet" />
   </head>
   <body class="bg-light d-flex flex-column min-vh-100">
-    <header th:replace="~{fragments/navbar :: navbar}"></header>
+    <header th:replace="~{fragments/navbar :: navbar(${navbarColor})}"></header>
     <main class="container my-4">
       <div th:replace="${content}"></div>
     </main>

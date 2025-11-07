@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<html
-  lang="pt-br"
-  xmlns:th="http://www.thymeleaf.org"
-  th:replace="~{layout :: layout('Home - Torresmo Delivery', ~{::content})}">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout('Home - Torresmo Delivery', ~{::content}, 'danger')}">
   <body>
     <div th:fragment="content">
       <!-- Hero Section -->
@@ -10,14 +7,10 @@
         <div class="row align-items-center">
           <div class="col-md-8">
             <h1 class="display-4 fw-bold mb-3">🐷 Torresmo Delivery</h1>
-            <p class="lead mb-4">
-              O melhor torresmo da cidade, crocante e saboroso, entregue quentinho na sua casa!
-            </p>
+            <p class="lead mb-4">O melhor torresmo da cidade, crocante e saboroso, entregue quentinho na sua casa!</p>
             <div class="d-flex gap-3">
               <a th:href="@{/produtos}" class="btn btn-light btn-lg">Ver Cardápio</a>
-              <a th:href="@{/pedido/acompanhar}" class="btn btn-outline-light btn-lg">
-                Acompanhar Pedido
-              </a>
+              <a th:href="@{/pedido/acompanhar}" class="btn btn-outline-light btn-lg">Acompanhar Pedido</a>
             </div>
           </div>
         </div>
@@ -43,9 +36,7 @@
                       <h5 class="card-title m-0" th:text="${produto.nome}">Sempre Fresquinho</h5>
                       <a class="btn btn-success py-0 fw-bold">Disponível</a>
                     </div>
-                    <p class="card-text text-muted" th:text="${produto.descricao}">
-                      Preparamos seu torresmo na hora para garantir máxima crocância
-                    </p>
+                    <p class="card-text text-muted" th:text="${produto.descricao}">Preparamos seu torresmo na hora para garantir máxima crocância</p>
                   </div>
                   <div class="d-flex justify-content-between align-items-center mt-3">
                     <span class="fw-bold fs-5 text-danger" th:text="${#numbers.formatCurrency(produto.preco)}">0,00</span>
@@ -67,9 +58,7 @@
               <div class="card-body text-center p-4">
                 <div class="display-4 mb-3">🔥</div>
                 <h5 class="card-title">Sempre Fresquinho</h5>
-                <p class="card-text text-muted">
-                  Preparamos seu torresmo na hora para garantir máxima crocância
-                </p>
+                <p class="card-text text-muted">Preparamos seu torresmo na hora para garantir máxima crocância</p>
               </div>
             </div>
           </div>

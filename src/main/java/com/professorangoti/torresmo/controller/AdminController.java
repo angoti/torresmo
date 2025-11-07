@@ -34,10 +34,23 @@ public class AdminController {
     return "admin";
   }
 
+  @GetMapping("/inline")
+  public String adminInline(Model model) {
+    List<Produto> produtos = produtoService.findAll();
+    model.addAttribute("produtos", produtos);
+    return "admin-inline";
+  }
+
   @PostMapping("/produtos")
   public String salvarProduto(Produto produto) {
     produtoService.save(produto);
     return "redirect:/admin";
+  }
+  
+  @PostMapping("/produtos-inline")
+  public String salvarProdutoInline(Produto produto) {
+    produtoService.save(produto);
+    return "redirect:/admin/inline";
   }
 
   @PostMapping("/produtos/{id}/delete")

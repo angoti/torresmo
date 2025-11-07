@@ -1,20 +1,11 @@
 <!DOCTYPE html>
-<html
-  lang="pt-br"
-  xmlns:th="http://www.thymeleaf.org"
-  th:replace="~{layout :: layout('Administrador', ~{::content})}">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout('Administrador', ~{::content}, 'danger')}">
   <body>
     <div th:fragment="content">
       <div class="d-flex justify-content-between align-items-center">
         <h1>Área do Administrador</h1>
         <div>
-          <button
-            id="btnNovo"
-            class="btn btn-danger"
-            data-bs-toggle="modal"
-            data-bs-target="#produtoModal">
-            Novo Produto
-          </button>
+          <button id="btnNovo" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#produtoModal">Novo Produto</button>
         </div>
       </div>
 
@@ -26,8 +17,9 @@
               <th class="border border-1 border-light">Nome</th>
               <th class="border border-1 border-light">Descrição</th>
               <th class="border border-1 border-light text-end">Preço</th>
+              <th class="border border-1 border-light text-center">Tamanho</th>
               <th class="border border-1 border-light text-center">Disponível</th>
-              <th class="border border-1 border-light text-center">Em destaque</th>
+              <th class="border border-1 border-light text-center">Destaque</th>
               <th class="border border-1 border-light text-end">Ações</th>
             </tr>
           </thead>
@@ -39,6 +31,7 @@
               <td class="text-end">
                 <span th:text="*{#numbers.formatCurrency(preco)}">0,00</span>
               </td>
+              <td class="text-center" th:text="*{tamanho}">-</td>
               <td class="text-center">
                 <span th:text="*{disponivel ? 'Sim' : 'Não'}">Não</span>
               </td>
@@ -55,21 +48,12 @@
                   th:data-preco="${produto.preco}"
                   th:data-tamanho="${produto.tamanho}"
                   th:data-disponivel="${produto.disponivel}"
-                  th:data-destaque="${produto.destaque}"
-                  >
+                  th:data-destaque="${produto.destaque}">
                   Editar
                 </button>
 
-                <form
-                  th:action="@{'/admin/produtos/' + ${produto.idProduto} + '/delete'}"
-                  method="post"
-                  class="d-inline">
-                  <button
-                    type="submit"
-                    class="btn btn-sm btn-outline-danger"
-                    onclick="return confirm('Excluir produto?');">
-                    Excluir
-                  </button>
+                <form th:action="@{'/admin/produtos/' + ${produto.idProduto} + '/delete'}" method="post" class="d-inline">
+                  <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir produto?');">Excluir</button>
                 </form>
               </td>
             </tr>
@@ -81,18 +65,10 @@
       <div class="modal fade" id="produtoModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
-            <form
-              id="produtoForm"
-              th:action="@{/admin/produtos}"
-              th:object="${produto}"
-              method="post">
+            <form id="produtoForm" th:action="@{/admin/produtos}" th:object="${produto}" method="post">
               <div class="modal-header">
                 <h5 class="modal-title">Produto</h5>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <input type="hidden" th:field="*{idProduto}" />
@@ -110,13 +86,7 @@
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label for="preco" class="form-label">Preço (R$)</label>
-                    <input
-                      th:field="*{preco}"
-                      class="form-control"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      required />
+                    <input th:field="*{preco}" class="form-control" type="number" step="0.01" min="0" required />
                   </div>
 
                   <div class="col-md-6 mb-3">
@@ -137,9 +107,7 @@
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                  Cancelar
-                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button type="submit" class="btn btn-danger">Salvar</button>
               </div>
             </form>

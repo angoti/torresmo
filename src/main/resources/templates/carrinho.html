@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout('Carrinho', ~{::content}, 'danger')}">
+  <body>
+    <div th:fragment="content">
+      <h1 class="mb-4">🛒 Seu Carrinho</h1>
+
+      <div th:if="${itens.isEmpty()}" class="alert alert-info">
+        <h4>Seu carrinho está vazio!</h4>
+        <p>Adicione produtos ao seu carrinho para continuar.</p>
+        <a th:href="@{/produtos}" class="btn btn-danger">Ver Produtos</a>
+      </div>
+
+      <div th:unless="${itens.isEmpty()}">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="card shadow-sm mb-4" th:each="item : ${itens}" th:object="${item}">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col-md-6">
+                    <h5 class="card-title text-danger mb-1" th:text="*{nome}">Produto</h5>
+                    <p class="text-muted small mb-2" th:text="*{descricao}">Descrição</p>
+                    <span class="badge bg-secondary" th:text="*{tamanho}">500g</span>
+                  </div>
+                  <div class="col-md-3">
+                    <form th:action="@{'/carrinho/atualizar/' + *{produtoId}}" method="post" class="d-flex align-items-center">
+                      <button class="btn btn-sm btn-outline-secondary" type="button" th:onclick="'diminuirQtd(' + *{produtoId} + ')'">-</button>
+                      <input
+                        type="number"
+                        class="form-control form-control-sm mx-2 text-center"
+                        th:id="'qtd-' + *{produtoId}"
+                        name="quantidade"
+                        th:value="*{quantidade}"
+                        min="1"
+                        max="99"
+                        style="width: 40px"
+                        onchange="this.form.submit()" />
+                      <button class="btn btn-sm btn-outline-secondary" type="button" th:onclick="'aumentarQtd(' + *{produtoId} + ')'">+</button>
+                    </form>
+                  </div>
+                  <div class="col-md-2 text-end">
+                    <div class="fw-bold text-danger" th:text="*{#numbers.formatCurrency(subtotal)}">R$ 0,00</div>
+                    <small class="text-muted" th:text="*{#numbers.formatCurrency(preco)} + ' cada'">R$ 0,00 cada</small>
+                  </div>
+                  <div class="col-md-1 text-end">
+                    <form th:action="@{'/carrinho/remover/' + *{produtoId}}" method="post">
+                      <button type="submit" class="btn btn-sm btn-outline-danger" title="Remover">🗑️</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">Resumo do Pedido</h5>
+                <hr />
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Total de itens:</span>
+                  <strong th:text="${totalItens}">0</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                  <span class="h5">Total:</span>
+                  <strong class="h5 text-danger" th:text="${#numbers.formatCurrency(valorTotal)}">R$ 0,00</strong>
+                </div>
+                <button class="btn btn-danger w-100 mb-2">Finalizar Pedido</button>
+                <a th:href="@{/produtos}" class="btn btn-outline-secondary w-100 mb-2">Continuar Comprando</a>
+                <form th:action="@{/carrinho/limpar}" method="post">
+                  <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Deseja realmente limpar o carrinho?')">
+                    Limpar Carrinho
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        function aumentarQtd(id) {
+          const input = document.getElementById("qtd-" + id);
+          const max = parseInt(input.max);
+          const atual = parseInt(input.value);
+          if (atual < max) {
+            input.value = atual + 1;
+            input.form.submit();
+          }
+        }
+
+        function diminuirQtd(id) {
+          const input = document.getElementById("qtd-" + id);
+          const min = parseInt(input.min);
+          const atual = parseInt(input.value);
+          if (atual > min) {
+            input.value = atual - 1;
+            input.form.submit();
+          }
+        }
+      </script>
+    </div>
+  </body>
+</html>
