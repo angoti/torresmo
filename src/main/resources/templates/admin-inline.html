@@ -118,6 +118,9 @@
       </div>
 
       <script th:inline="javascript">
+        const csrfParam = /*[[${_csrf.parameterName}]]*/ "_csrf";
+        const csrfToken = /*[[${_csrf.token}]]*/ "";
+
         // Adicionar event listeners aos botões
         document.querySelectorAll(".btn-editar").forEach(btn => {
           btn.addEventListener("click", function () {
@@ -167,6 +170,7 @@
             alert("Nome e Preço são obrigatórios!");
             return;
           }
+          dados[csrfParam] = csrfToken;
 
           for (const [key, value] of Object.entries(dados)) {
             const input = document.createElement("input");
@@ -222,6 +226,7 @@
             alert("Nome e Preço são obrigatórios!");
             return;
           }
+          dados[csrfParam] = csrfToken;
 
           for (const [key, value] of Object.entries(dados)) {
             const input = document.createElement("input");
